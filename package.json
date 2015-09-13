@@ -1,0 +1,27 @@
+{
+  "name": "locator-server",
+  "version": "1.0.0",
+  "description": "A server for the locator app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "tap test/*.js"
+  },
+  "author": "Aria Stewart <aredridel@nbtsc.org>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "esformatter": "^0.7.3",
+    "tap": "^1.4.1"
+  },
+  "dependencies": {
+    "express": "^5.0.0-alpha.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aredridel/locator-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aredridel/locator-server/issues"
+  },
+  "homepage": "https://github.com/aredridel/locator-server#readme"
+}
