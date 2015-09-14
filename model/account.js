@@ -25,10 +25,4 @@ Account.fromSignup = function(json) {
   });
 };
 
-Account.prototype.toJSON = function() {
-  return {
-    username: this.username
-  };
-};
-
 module.exports = Account;
