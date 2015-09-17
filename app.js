@@ -14,21 +14,23 @@ app.use(bodyParser.json());
 app.put('/account/:id', function(req, res, next) {
   Account.fromSignup(req.body).catch(function(err) {
     throw Kapow(err, 400);
-  }).then(assertAccountOwnsItself(req.params)).then(function(account) {
-    return req.db.get(account.username).then(function(existing) {
-      throw Kapow(409, 'Account already exists');
-    }).catch(function(err) {
-      if (err.name == 'NotFoundError') {
-        return account;
-      } else {
-        throw err;
-      }
-    });
+  }).tap(assertAccountOwnsItself(req.params)).tap(assertAccountDoesNotExist).tap(function(account) {
+    return req.db.put(account.username, account)
   }).then(function(account) {
     return new AccountPublic(account);
   }).then(function(account) {
     res.json(account);
   }).catch(next);
+
+  function assertAccountDoesNotExist(account) {
+    return req.db.get(account.username).then(function(existing) {
+      throw Kapow(409, 'Account already exists');
+    }).catch(function(err) {
+      if (err.name != 'NotFoundError') {
+        throw err;
+      }
+    });
+  }
 });
 
 app.use(function handleErrors(err, req, res, next) {
@@ -42,7 +44,7 @@ app.use(function handleErrors(err, req, res, next) {
 function assertAccountOwnsItself(resource) {
   return function(account) {
     if (account.username != resource.id) {
-      throw Kapow(401, "username doesn't match");
+      throw Kapow(403, "username doesn't match");
     }
 
     return account;
