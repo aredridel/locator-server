@@ -15,7 +15,7 @@ app.put('/account/:id', function(req, res, next) {
   Account.fromSignup(req.body).catch(function(err) {
     throw Kapow(err, 400);
   }).tap(assertAccountOwnsItself(req.params)).tap(assertAccountDoesNotExist).tap(function(account) {
-    return req.db.put(account.username, account)
+    return req.db.sublevel('users').put(account.username, account)
   }).then(function(account) {
     return new AccountPublic(account);
   }).then(function(account) {
@@ -23,7 +23,7 @@ app.put('/account/:id', function(req, res, next) {
   }).catch(next);
 
   function assertAccountDoesNotExist(account) {
-    return req.db.get(account.username).then(function(existing) {
+    return req.db.sublevel('users').get(account.username).then(function(existing) {
       throw Kapow(409, 'Account already exists');
     }).catch(function(err) {
       if (err.name != 'NotFoundError') {
